@@ -1,55 +1,20 @@
-app = Flask(__name__,template_folder='transactions.csv')
+app = Flask(__name__,template_folder='Online Sales Data.csv')
 
 @app.route('/')
 def index():
-    data_html = df.head(20).to_html(index=False)
+    data_html = sales.head(20).to_html(index=False)
     return render_template_string('''
         <!DOCTYPE html>
         <html>
-        <body style="background-color:lightblue;>
-        <head>
-        <style>
-         
-           .styled {
-            border: 0;
-            line-height: 2.5;
-            padding: 0 20px;
-            font-size: 1rem;
-            text-align: center;
-            color: #fff;
-            text-shadow: 1px 1px 1px #000;
-            border-radius: 10px;
-            background-color: rgb(220 0 0 / 100%);
-            background-image: linear-gradient(
-            to top left,
-            rgb(0 0 0 / 20%),
-            rgb(0 0 0 / 20%) 30%,
-            rgb(0 0 0 / 0%)
-            );
-          box-shadow:
-              inset 2px 2px 3px rgb(255 255 255 / 60%),
-              inset -2px -2px 3px rgb(0 0 0 / 60%);
-            }
+        <body>
 
-        .styled:hover {
-          background-color: rgb(255 0 0 / 100%);
-            }
-
-        .styled:active {
-          box-shadow:
-            inset -2px -2px 3px rgb(255 255 255 / 60%),
-            inset 2px 2px 3px rgb(0 0 0 / 60%);
-            }
-        </style>
+          <button>Data</button>
+          <button>About</button>
        
-        <input class="styled" type="button" value="About" />
-        <input class="styled" type="button" value="data" />
         <h1> Project_1 Group-6 </h1>
         <b> Muhammed Patel </b><br>
         <b> Habib sheikh</b><br>
-        <div>{{data|safe}}</div>
-        {{data|safe}}
-        <head>
+       {{data|safe}}
         </body>
         </html>
     ''', data = data_html)
