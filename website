@@ -1,1 +1,106 @@
+#INSTALLING AND  IMPORTING NECESSARY PAKAGES
+pip install pandas
+pip install -U Flask
+from flask import Flask,render_template_string,render_template  
+from werkzeug.serving import run_simple 
+import pandas as pd
+pip install sqlite3
+import sqlite3 
+con=sqlite3.connect('hospital.db')
+cursor=con.cursor()
+#THIS CODE IS FOR DATABASE
+create_table=""" CREATE TABLE IF NOT EXISTS hospital_Info(
+                Provider_ID INT,
+                Hospital_Name TEXT,
+                Address VARCHAR,
+                City TEXT,
+                State TEXT,
+                ZIP_Code INT,
+                County_Name TEXT,
+                Phone_Number INT,
+                EmergencyServices BOOLEAN);
+                """
+cursor.execute(create_table)
+#READ CSV FILE
+import csv 
+with open ("Hospital_Info.csv") as file:
+    data_file=csv.reader(file)
+    for row in data_file:
+        if row[0]=='Provider_ID':
+            continue
+        cursor.execute("INSERT INTO hospital_Info VALUES(?,?,?,?,?,?,?,?,?)",(row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7], row[8]))
+dataframe = pd.read_csv('Hospital_Info.csv') 
+dataframe
+con.commit()
+con.close()
+#THIS CODE IS FOR INDEX PAGE
+webpage=Flask(__name__)
+@webpage.route('/') 
+def home(): 
+    data_html=dataframe.head(50).to_html(index=False)  
+    return render_template_string('''
+    <!DOCTYPE html>
+    <html>
+    <body>
+        <h1><b>Final Project(GROUP_NO: 6)</b></h1>
+        <b>Muhammed Patel</b><br>
+        <b>Mohammed Habeeb Uddin Ifham</b>
+        <h3><b>Hospital Information</b></h3>
+        <p>Welcome to our Database</p>
+        <a href="http://localhost:7300/Data">
+        <button>Data</button>
+        </a>
+        <a href="http://localhost:7300/about">
+        <button>About</button>
+        </a>
+
+   </body>
+   </html>
+   ''',data=data_html)
+#THIS CODE IS FOR DATA PAGE
+@webpage.route('/Data') 
+def Data(): 
+    data_html=dataframe.head(50).to_html(index=False)  
+    return render_template_string('''
+    <!DOCTYPE html>
+    <html>
+    <body>
+
+        <h1>Hospital Information</h1>
+        <div>{{data|safe}} </div>
+
+   </body>
+   </html>
+   ''',data=data_html)
+#THIS CODE IS FOR ABOUT PAGE
+@webpage.route('/about')
+def about():
+    return  render_template_string('''
+    <!DOCTYPE html>
+    <html>
+    </head>
+    <body>                                                             
+         
+        <h1>Hospital Information</h1>
+        <p>We Have different variables that tells the information about different Hospitals</p>
+        <a href="https://www.kaggle.com/datasets/cms/hospital-general-information">
+        <button>Source</button>
+        </a>
+        
+        <ul>
+            <li><b>Provider_ID:</b>Unique ID for Hospital.</li>
+            <li><b>Hospital_Name:</b>Name of the Hospital.</li>
+            <li><b>Address:</b>Addresses of the Hospital.</li>
+            <li><b>City:</b>City of the Hospital.</li>
+            <li><b>State:</b>State of the Hospital.</li>
+            <li><b>ZIP_Code:</b>Postal Code of the Hospital.</li>
+            <li><b>County_Name:</b>County Name of the Hospital.</li>
+            <li><b>Phone_Number:</b>Contact Number of the Hospital.</li> 
+            <li><b>EmergencyServices:</b>Does the Hospital Have Emergency Services?</li>  
+        </ul>
+                         
+    </body>
+    </html>                             
+    ''')
+run_simple('localhost',7300,webpage,use_reloader=False,use_debugger=False)
 
