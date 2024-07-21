@@ -1,0 +1,25 @@
+pip install sqlite3
+import sqlite3 
+con=sqlite3.connect('hospital.db')
+cursor=con.cursor()
+create_table=""" CREATE TABLE IF NOT EXISTS hospital_Info(
+                Provider_ID INT,
+                Hospital_Name TEXT,
+                Address VARCHAR,
+                City TEXT,
+                State TEXT,
+                ZIP_Code INT,
+                County_Name TEXT,
+                Phone_Number INT,
+                EmergencyServices BOOLEAN);
+                """
+cursor.execute(create_table)
+import csv 
+with open ("Hospital_Info.csv") as file:
+    data_file=csv.reader(file)
+    for row in data_file:
+        if row[0]=='Provider_ID':
+            continue
+        cursor.execute("INSERT INTO hospital_Info VALUES(?,?,?,?,?,?,?,?,?)",(row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7], row[8]))
+dataframe = pd.read_csv('Hospital_Info.csv') 
+dataframe
